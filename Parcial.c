@@ -139,6 +139,7 @@ struct TVenta * CrearVentas() {
 NodoTVenta *crearListaVacia();
 void crearLista(NodoTVenta **listaVentas, TVenta * Ventas);
 void mostrarLista(NodoTVenta *listaVentas);
+void eliminarProductos(NodoTVenta **listaVentas);
 
 //NodoTVenta *crearVenta();
 
@@ -146,7 +147,9 @@ int main() {
     struct TVenta * Ventas = CrearVentas(); // <-- Preguntar si es el ArregloDeVentas del punto 1.
     NodoTVenta *listaVentas;
     listaVentas = crearListaVacia();
-    crearLista(&listaVentas, Ventas);
+    crearLista(&listaVentas, Ventas); // Punto 1, consultar si esta bien
+    mostrarLista(listaVentas); //Punto 2 - Mostrar lista, consultar si esta bien
+    eliminarProductos(&listaVentas);
     mostrarLista(listaVentas);
 
     // for (int i = 0; i < 100; i++) {
@@ -223,4 +226,26 @@ void mostrarLista(NodoTVenta *listaVentas){
         contador++;
     }
     printf("%d: %d - %s - %.2f - %d - %d", contador, aux->venta.ServicioID, aux->venta.ServicioContratado, aux->venta.Precio, aux->venta.Bonificacion, aux->venta.Empresa);
+}
+
+void eliminarProductos(NodoTVenta **listaVentas){
+    NodoTVenta *aux, *nuevaLista, *aux2;
+    nuevaLista = crearListaVacia();
+    int contador = 1;
+    //aux = crearListaVacia();
+    //aux2 = crearListaVacia();
+    aux = *listaVentas;
+    //aux2->Siguiene = *listaVentas;
+    while (aux->Siguiene)
+    {
+        
+        aux = aux->Siguiene;
+        //printf("%d\n",contador);
+        //contador++;
+    }
+    // if (aux->venta.Empresa != 1)
+    // {
+    //     aux2->Siguiene = NULL;
+    // }
+    
 }
