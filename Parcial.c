@@ -140,17 +140,29 @@ NodoTVenta *crearListaVacia();
 void crearLista(NodoTVenta **listaVentas, TVenta * Ventas);
 void mostrarLista(NodoTVenta *listaVentas);
 void eliminarProductos(NodoTVenta **listaVentas);
-
+void eliminarNodo(NodoTVenta **listaVentas);
+void quitar50MB(NodoTVenta **listaVentas, NodoTVenta **lista50MB);
+void contarCantidadLista(NodoTVenta *lista50MB);
+void bonificacion(NodoTVenta *lista50MB);
 //NodoTVenta *crearVenta();
 
 int main() {
-    struct TVenta * Ventas = CrearVentas(); // <-- Preguntar si es el ArregloDeVentas del punto 1.
+    struct TVenta * Ventas = CrearVentas(); // ArregloDeVentas del punto 1, Ventas es un puntero del primer elemento de la estructura
     NodoTVenta *listaVentas;
     listaVentas = crearListaVacia();
     crearLista(&listaVentas, Ventas); // Punto 1, consultar si esta bien
     mostrarLista(listaVentas); //Punto 2 - Mostrar lista, consultar si esta bien
     eliminarProductos(&listaVentas);
+    printf("\n");
     mostrarLista(listaVentas);
+    NodoTVenta *Servicio50MB;
+    Servicio50MB = crearListaVacia();
+    quitar50MB(&listaVentas, &Servicio50MB);
+    printf("\n");
+    mostrarLista(listaVentas);
+    mostrarLista(Servicio50MB);
+    contarCantidadLista(Servicio50MB);
+    bonificacion(Servicio50MB);
 
     // for (int i = 0; i < 100; i++) {
     //     printf("Venta ID: %d\n", Ventas[i].ServicioID);
@@ -229,17 +241,38 @@ void mostrarLista(NodoTVenta *listaVentas){
 }
 
 void eliminarProductos(NodoTVenta **listaVentas){
-    NodoTVenta *aux, *nuevaLista, *aux2;
-    nuevaLista = crearListaVacia();
-    int contador = 1;
+    NodoTVenta *aux, *aux2;
+    //nuevaLista = crearListaVacia();
+    //int contador = 1;
     //aux = crearListaVacia();
     //aux2 = crearListaVacia();
     aux = *listaVentas;
+    aux2 = *listaVentas;
     //aux2->Siguiene = *listaVentas;
-    while (aux->Siguiene)
+    while (aux)
     {
+        if (aux->venta.Empresa != 1)
+        {
+            if (aux == *listaVentas)
+            {
+                *listaVentas = aux->Siguiene;
+                aux2 = *listaVentas;
+                //aux = *listaVentas;
+            }else
+            {
+                aux2->Siguiene = aux->Siguiene;
+                aux = aux2->Siguiene;
+            }
+            
+            
+            //eliminarNodo(listaVentas);
+        }else
+        {
+            aux2 = aux;
+            aux = aux->Siguiene;
+            /* code */
+        }
         
-        aux = aux->Siguiene;
         //printf("%d\n",contador);
         //contador++;
     }
@@ -248,4 +281,68 @@ void eliminarProductos(NodoTVenta **listaVentas){
     //     aux2->Siguiene = NULL;
     // }
     
+}
+
+void quitar50MB(NodoTVenta **listaVentas, NodoTVenta **lista50MB){
+    NodoTVenta *aux, *aux2;
+    *lista50MB = NULL;
+    aux = *listaVentas;
+    aux2 = *listaVentas;
+    while (aux)
+    {
+        if (strcmp(aux->venta.ServicioContratado,"50Mb") == 0)
+        {
+            if (aux == *listaVentas)
+            {
+                *listaVentas = aux->Siguiene;
+                aux2 = *listaVentas;
+                aux->Siguiene = *lista50MB;
+                *lista50MB = aux;
+                aux = aux2;
+            }
+            else
+            {
+                
+                aux2->Siguiene = aux->Siguiene;
+                aux->Siguiene = *lista50MB;
+                *lista50MB = aux;
+                aux = aux2->Siguiene;
+            }
+            
+        }
+        else
+        {
+            aux2 = aux;
+            aux = aux->Siguiene;
+        }
+        
+    }
+    
+}
+
+void contarCantidadLista(NodoTVenta *lista50MB){
+    NodoTVenta *aux;
+    aux = lista50MB;
+    int contador = 0;
+    while (aux)
+    {
+        contador++;
+        aux = aux->Siguiene;
+    }
+    printf("\nLa cantidad de servicios de 50Mb es: %d", contador);
+}
+
+void bonificacion(NodoTVenta *lista50MB){
+    NodoTVenta *aux;
+    aux = lista50MB;
+    float monto = 0;
+    while (aux)
+    {
+        if (aux->venta.Bonificacion == 1)
+        {
+            monto += aux->venta.Precio;
+        }
+        aux = aux->Siguiene;
+    }
+    printf("\nEl monto total de ventas del serivicio de 50Mb con bonificacion es: $%.0f", monto);
 }
