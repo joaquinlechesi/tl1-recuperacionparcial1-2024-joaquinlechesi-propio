@@ -144,6 +144,7 @@ void eliminarNodo(NodoTVenta **listaVentas);
 void quitar50MB(NodoTVenta **listaVentas, NodoTVenta **lista50MB);
 void contarCantidadLista(NodoTVenta *lista50MB);
 void bonificacion(NodoTVenta *lista50MB);
+void liberarMemoria(NodoTVenta **lista);
 //NodoTVenta *crearVenta();
 
 int main() {
@@ -151,18 +152,21 @@ int main() {
     NodoTVenta *listaVentas;
     listaVentas = crearListaVacia();
     crearLista(&listaVentas, Ventas); // Punto 1, consultar si esta bien
-    mostrarLista(listaVentas); //Punto 2 - Mostrar lista, consultar si esta bien
+    //mostrarLista(listaVentas); //Punto 2 - Mostrar lista, consultar si esta bien
     eliminarProductos(&listaVentas);
+    contarCantidadLista(listaVentas);
     printf("\n");
-    mostrarLista(listaVentas);
+    //mostrarLista(listaVentas);
     NodoTVenta *Servicio50MB;
     Servicio50MB = crearListaVacia();
     quitar50MB(&listaVentas, &Servicio50MB);
     printf("\n");
-    mostrarLista(listaVentas);
-    mostrarLista(Servicio50MB);
+    //mostrarLista(listaVentas);
+    //mostrarLista(Servicio50MB);
     contarCantidadLista(Servicio50MB);
     bonificacion(Servicio50MB);
+    liberarMemoria(&listaVentas);
+    liberarMemoria(&Servicio50MB);
 
     // for (int i = 0; i < 100; i++) {
     //     printf("Venta ID: %d\n", Ventas[i].ServicioID);
@@ -340,9 +344,24 @@ void bonificacion(NodoTVenta *lista50MB){
     {
         if (aux->venta.Bonificacion == 1)
         {
-            monto += aux->venta.Precio;
+            monto += aux->venta.Precio - (aux->venta.Precio * 0.4);
+            
+            
         }
         aux = aux->Siguiene;
     }
     printf("\nEl monto total de ventas del serivicio de 50Mb con bonificacion es: $%.0f", monto);
+}
+
+void liberarMemoria(NodoTVenta **lista){
+    NodoTVenta *siguiente, *actual;
+    actual = *lista;
+    while (actual)
+    {
+        siguiente = actual->Siguiene;
+        free(actual->venta.ServicioContratado);
+        free(actual);
+        actual = siguiente;
+    }
+    *lista = NULL;
 }
